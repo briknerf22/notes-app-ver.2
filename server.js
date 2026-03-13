@@ -19,9 +19,12 @@ app.use(session({
     saveUninitialized: false
 }));
 
-// Připojení k DB (zatím lokálně - předpokládá spuštěné MongoDB)
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/databaze_poznamek')
-    .then(() => console.log('MongoDB připojeno lokálně'))
+const authRoutes = require('./routes/auth.js');
+app.use('/', authRoutes);
+
+// Připojení k DB
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('MongoDB připojeno'))
     .catch(err => console.error('Chyba připojení k DB:', err));
 
 const PORT = process.env.PORT || 3000;
