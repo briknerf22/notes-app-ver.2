@@ -31,4 +31,29 @@ router.post('/register', async (req, res) => {
     }
 });
 
+
+// POST - Přihlášení
+router.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        // Najít uživatele v DB
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(400).send('Chybné jméno nebo heslo.');
+        }
+
+        // Porovnat hashované heslo (Požadavek: heslo v hashované podobě [cite: 23])
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).send('Chybné jméno nebo heslo.');
+        }
+
+        // Uložit ID uživatele do session
+        req.session.userId = user._id;
+        res.send('Přihlášení úspěšné! Nyní můžete psát poznámky.');
+    } catch (err) {
+        res.status(500).send('Chyba při přihlašování.');
+    }
+});
 module.exports = router;
