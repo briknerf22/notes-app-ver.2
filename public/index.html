@@ -7,7 +7,8 @@
 </head>
 <body>
     <h1>Databáze poznámek</h1>
-    
+ 
+<div id="auth-container">
     <div id="auth-section">
         <h2>Registrace / Přihlášení</h2>
         <form action="/register" method="POST">
@@ -23,49 +24,50 @@
         <input type="password" name="password" placeholder="Heslo" required>
         <button type="submit">Přihlásit se</button>
     </form>
+</div>
 
-    <div id="notes-section" style="display: none;">
-    <h2>Moje Poznámky</h2>
-    
-    <form action="/add-note" method="POST">
-        <input type="text" name="title" placeholder="Nadpis poznámky" required>
-        <textarea name="text" placeholder="Obsah poznámky..." required></textarea>
-        <button type="submit">Uložit poznámku</button>
-    </form>
-
-    <hr>
-    <div id="notes-display">
-        </div>
+    <div id="notes-container" style="display: none;">
+        <h2>Moje Poznámky</h2>
+        <p>Stav: Přihlášen</p>
+        <form action="/add-note" method="POST">
+            <input type="text" name="title" placeholder="Nadpis" required>
+            <textarea name="text" placeholder="Obsah poznámky" required></textarea>
+            <button type="submit">Uložit poznámku</button>
+        </form>
+        <div id="notes-display"></div>
+        <hr>
+        <button onclick="logout()">Odhlásit se</button>
     </div>
 
     <script>
-    // Jednoduchý trik: zkusíme načíst poznámky. 
-    // Pokud dostaneme 401, uživatel není přihlášen.
-    async function checkAuth() {
+    async function refreshUI() {
         const res = await fetch('/my-notes');
+        
         if (res.ok) {
+            // JSME PŘIHLÁŠENI
             const notes = await res.json();
-            document.getElementById('auth-section').style.display = 'none';
-            document.getElementById('notes-section').style.display = 'block';
-            renderNotes(notes);
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('notes-container').style.display = 'block';
+            
+            // Vykreslení poznámek (splnění chronologického výpisu)
+            const display = document.getElementById('notes-display');
+            display.innerHTML = notes.map(n => `
+                <div class="note">
+                    <h3>${n.title}</h3>
+                    <p>${n.text}</p>
+                    <small>${new Date(n.createdAt).toLocaleString()}</small>
+                </div>
+            `).join('');
+        } else {
+            // NEJSME PŘIHLÁŠENI
+            document.getElementById('auth-container').style.display = 'block';
+            document.getElementById('notes-container').style.display = 'none';
         }
     }
 
-    function renderNotes(notes) {
-        const container = document.getElementById('notes-display');
-        container.innerHTML = notes.map(n => `
-            <div class="note">
-                <h3>${n.title}</h3>
-                <p>${n.text}</p>
-                <small>${new Date(n.createdAt).toLocaleString()}</small>
-            </div>
-        `).join('');
-    }
-
-    checkAuth();
+    // Spustit při načtení
+    refreshUI();
     </script>
 
-    <hr>
-    <p>Stav: Nepřihlášen</p>
 </body>
 </html>
