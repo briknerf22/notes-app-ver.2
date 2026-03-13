@@ -51,7 +51,7 @@ router.post('/login', async (req, res) => {
 
         // Uložit ID uživatele do session
         req.session.userId = user._id;
-        res.send('Přihlášení úspěšné! Nyní můžete psát poznámky.');
+        res.redirect('/');
     } catch (err) {
         res.status(500).send('Chyba při přihlašování.');
     }

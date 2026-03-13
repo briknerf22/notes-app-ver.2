@@ -24,6 +24,47 @@
         <button type="submit">Přihlásit se</button>
     </form>
 
+    <div id="notes-section" style="display: none;">
+    <h2>Moje Poznámky</h2>
+    
+    <form action="/add-note" method="POST">
+        <input type="text" name="title" placeholder="Nadpis poznámky" required>
+        <textarea name="text" placeholder="Obsah poznámky..." required></textarea>
+        <button type="submit">Uložit poznámku</button>
+    </form>
+
+    <hr>
+    <div id="notes-display">
+        </div>
+    </div>
+
+    <script>
+    // Jednoduchý trik: zkusíme načíst poznámky. 
+    // Pokud dostaneme 401, uživatel není přihlášen.
+    async function checkAuth() {
+        const res = await fetch('/my-notes');
+        if (res.ok) {
+            const notes = await res.json();
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('notes-section').style.display = 'block';
+            renderNotes(notes);
+        }
+    }
+
+    function renderNotes(notes) {
+        const container = document.getElementById('notes-display');
+        container.innerHTML = notes.map(n => `
+            <div class="note">
+                <h3>${n.title}</h3>
+                <p>${n.text}</p>
+                <small>${new Date(n.createdAt).toLocaleString()}</small>
+            </div>
+        `).join('');
+    }
+
+    checkAuth();
+    </script>
+
     <hr>
     <p>Stav: Nepřihlášen</p>
 </body>
