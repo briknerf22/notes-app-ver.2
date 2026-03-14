@@ -36,7 +36,7 @@
         </form>
         <div id="notes-display"></div>
         <hr>
-        <button onclick="logout()">Odhlásit se</button>
+        <a href="/logout"><button>Odhlásit se</button></a>
     </div>
 
     <script>
@@ -56,6 +56,9 @@
                     <h3>${n.title}</h3>
                     <p>${n.text}</p>
                     <small>${new Date(n.createdAt).toLocaleString()}</small>
+                    <form action="/delete-note/${n._id}" method="POST" style="margin-top: 10px;">
+                    <button type="submit" style="background: red;">Smazat</button>
+                    </form>
                 </div>
             `).join('');
         } else {

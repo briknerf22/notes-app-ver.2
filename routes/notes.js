@@ -37,4 +37,15 @@ router.get('/my-notes', isAuthenticated, async (req, res) => {
     }
 });
 
+// DELETE - Smazání poznámky
+router.post('/delete-note/:id', isAuthenticated, async (req, res) => {
+    try {
+        // Smaže poznámku, ale jen pokud patří přihlášenému uživateli (bezpečnost!)
+        await Note.findOneAndDelete({ _id: req.params.id, userId: req.session.userId });
+        res.redirect('/');
+    } catch (err) {
+        res.status(500).send('Chyba při mazání.');
+    }
+});
+
 module.exports = router;

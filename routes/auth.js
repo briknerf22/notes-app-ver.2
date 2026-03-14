@@ -25,7 +25,7 @@ router.post('/register', async (req, res) => {
         });
 
         await newUser.save();
-        res.send('Registrace úspěšná! Nyní se můžete přihlásit.');
+        res.send('<h1>Registrace úspěšná!</h1><p>Za chvíli budete přesměrováni na přihlášení...</p><script>setTimeout(() => { window.location.href = "/"; }, 2000);</script>');
     } catch (err) {
         res.status(500).send('Chyba při registraci.');
     }
@@ -56,4 +56,12 @@ router.post('/login', async (req, res) => {
         res.status(500).send('Chyba při přihlašování.');
     }
 });
+
+// GET - Odhlášení
+router.get('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/'); // Po odhlášení šup na úvodní stránku
+    });
+});
+
 module.exports = router;
