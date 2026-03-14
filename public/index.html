@@ -64,13 +64,12 @@
             // Vykreslení poznámek (splnění chronologického výpisu)
             const display = document.getElementById('notes-display');
             display.innerHTML = notes.map(n => `
-                <div class="note style="${n.isImportant ? 'border-left: 5px solid red; background: #fff5f5;' : ''}">
-                    <h3>${n.title}</h3>
+                <div class="note" style="${n.isImportant ? 'border-left: 5px solid red; background: #fff5f5;' : ''}">
                     <h3>${n.isImportant ? '📌 ' : ''}${n.title}</h3>
                     <p>${n.text}</p>
                     <small>${new Date(n.createdAt).toLocaleString()}</small>
                     <form action="/delete-note/${n._id}" method="POST" style="margin-top: 10px;">
-                    <button type="submit" style="background: red;">Smazat</button>
+                        <button type="submit" style="background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px;">Smazat</button>
                     </form>
                 </div>
             `).join('');
