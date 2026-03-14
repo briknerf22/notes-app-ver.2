@@ -13,10 +13,11 @@ function isAuthenticated(req, res, next) {
 // POST - Vložení nové poznámky [cite: 25, 27]
 router.post('/add-note', isAuthenticated, async (req, res) => {
     try {
-        const { title, text } = req.body;
+        const { title, text, isImportant } = req.body;
         const newNote = new Note({
             title,
             text,
+            isImportant: isImportant === 'on', // Checkbox vrací 'on' pokud je zaškrtnutý
             userId: req.session.userId // Přiřazení k přihlášenému uživateli
         });
         await newNote.save();

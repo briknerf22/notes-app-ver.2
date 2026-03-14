@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
+const Note = require('../models/note');
 
 // POST - Registrace
 router.post('/register', async (req, res) => {
@@ -62,6 +63,24 @@ router.get('/logout', (req, res) => {
     req.session.destroy(() => {
         res.redirect('/'); // Po odhlášení šup na úvodní stránku
     });
+});
+
+router.post('/delete-account', async (req, res) => {
+    if (!req.session.userId) return res.status(401).send('Nepřihlášen');
+    
+    try {
+        const userId = req.session.userId;
+        // 1. Smazat všechny poznámky uživatele
+        await Note.deleteMany({ userId: userId });
+        // 2. Smazat uživatele
+        await User.findByIdAndDelete(userId);
+        // 3. Zničit session
+        req.session.destroy(() => {
+            res.redirect('/');
+        });
+    } catch (err) {
+        res.status(500).send('Chyba při mazání účtu.');
+    }
 });
 
 module.exports = router;

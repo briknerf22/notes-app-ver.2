@@ -29,14 +29,26 @@
     <div id="notes-container" style="display: none;">
         <h2>Moje Poznámky</h2>
         <p>Stav: Přihlášen</p>
-        <form action="/add-note" method="POST">
+        <form action="/add-note" method="POST" style="display: flex; flex-direction: column; gap: 10px; max-width: 300px;">
             <input type="text" name="title" placeholder="Nadpis" required>
             <textarea name="text" placeholder="Obsah poznámky" required></textarea>
+            
+            <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                <input type="checkbox" name="isImportant" style="width: auto; margin: 0;"> 
+                <span>Označit jako důležité</span>
+            </label>
+            
             <button type="submit">Uložit poznámku</button>
         </form>
         <div id="notes-display"></div>
         <hr>
-        <a href="/logout"><button>Odhlásit se</button></a>
+        <div class="account-actions" style="display: flex; gap: 10px; align-items: center; margin-top: 20px;">
+            <a href="/logout"><button>Odhlásit se</button></a>
+            
+            <form action="/delete-account" method="POST" onsubmit="return confirm('Opravdu chcete smazat celý účet?')">
+                <button type="submit" style="background: black; color: white;">Smazat účet</button>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -52,8 +64,9 @@
             // Vykreslení poznámek (splnění chronologického výpisu)
             const display = document.getElementById('notes-display');
             display.innerHTML = notes.map(n => `
-                <div class="note">
+                <div class="note style="${n.isImportant ? 'border-left: 5px solid red; background: #fff5f5;' : ''}">
                     <h3>${n.title}</h3>
+                    <h3>${n.isImportant ? '📌 ' : ''}${n.title}</h3>
                     <p>${n.text}</p>
                     <small>${new Date(n.createdAt).toLocaleString()}</small>
                     <form action="/delete-note/${n._id}" method="POST" style="margin-top: 10px;">
